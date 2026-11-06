@@ -9,6 +9,7 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminSettings from "./pages/admin/AdminSettings";
+import ContactPage from "./pages/ContactPage";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/ofertas" element={<Catalog offersOnly />} />
         <Route path="/producto/:slug" element={<ProductPage />} />
         <Route path="/carrito" element={<CartPage />} />
+        <Route path="/contacto" element={<ContactPage />} />
         <Route path="*" element={<div className="container-x py-24 text-center">Página no encontrada</div>} />
       </Route>
       <Route path="/admin/login" element={<AdminLogin />} />
