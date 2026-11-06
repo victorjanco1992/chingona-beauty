@@ -95,7 +95,7 @@ r.get(
 );
 
 const orderSchema = z.object({
-  customerName: z.string().trim().max(120).default("Cliente WhatsApp"),
+  customerName: z.string().trim().min(2, "Ingresa tu nombre").max(120),
   phone: z.string().trim().max(30).default(""),
   notes: z.string().trim().max(1000).default(""),
   items: z
