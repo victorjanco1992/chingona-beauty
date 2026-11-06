@@ -21,11 +21,12 @@ export default function Layout() {
           </Link>
           <div className="flex items-center gap-1">
             <NavLink to="/" end className="hidden rounded-full px-3 py-2 text-sm font-semibold hover:bg-brand-light sm:block">Catálogo</NavLink>
+            <Link to="/contacto" className={item}>Contacto</Link>
             <Link to="/carrito" aria-label="Carrito" className="relative rounded-full p-2 hover:bg-brand-light">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 7h12l1 13H5L6 7Z" /><path d="M9 7a3 3 0 0 1 6 0" /></svg>
               {count > 0 && <span className="absolute -right-0.5 -top-0.5 min-w-[18px] rounded-full bg-brand px-1 text-center text-[11px] font-bold leading-[18px] text-white">{count}</span>}
             </Link>
-            <Link to="/contacto" className={item}>Contacto</Link>
+            
             <button aria-label="Menú" onClick={() => setOpen(!open)} className="rounded-full p-2 hover:bg-brand-light">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
             </button>
