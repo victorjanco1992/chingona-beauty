@@ -1,37 +1,48 @@
+import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import { useEffect } from "react";
 import { useCart } from "../cart";
 
-const nav = "text-sm font-semibold px-3 py-2 rounded-full hover:bg-brand-light";
-const active = ({ isActive }: { isActive: boolean }) => `${nav} ${isActive ? "bg-brand-light text-brand" : ""}`;
+const item = "block rounded-xl px-4 py-3 text-sm font-semibold hover:bg-brand-light";
 
 export default function Layout() {
   const { count } = useCart();
   const { pathname } = useLocation();
-  useEffect(() => window.scrollTo(0, 0), [pathname]);
+  const [open, setOpen] = useState(false);
+  useEffect(() => { window.scrollTo(0, 0); setOpen(false); }, [pathname]);
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-30 border-b border-gold-light/70 bg-cream/95 backdrop-blur">
-        <div className="container-x flex items-center justify-between gap-2 py-2">
+        <div className="container-x relative flex items-center justify-between py-2">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/logo.jpg" alt="Chingona Beauty" className="h-12 w-12 rounded-full object-cover sm:h-14 sm:w-14" />
-            <span className="hidden font-display text-lg font-bold sm:block">Chingona <span className="font-script text-2xl text-brand">Beauty</span></span>
+            <img src="/logo.jpg" alt="Chingona Beauty" className="h-10 w-10 rounded-full object-cover" />
+            <span className="font-display text-lg font-bold">Chingona <span className="font-script text-2xl text-brand">Beauty</span></span>
           </Link>
-          <nav className="flex items-center gap-1">
-            <NavLink to="/catalogo" className={active}>Catálogo</NavLink>
-            <NavLink to="/ofertas" className={active}>Ofertas</NavLink>
-            <NavLink to="/carrito" className={active}>
-              Carrito
-              {count > 0 && <span className="ml-1 rounded-full bg-brand px-2 py-0.5 text-xs text-white">{count}</span>}
-            </NavLink>
-          </nav>
+          <div className="flex items-center gap-1">
+            <NavLink to="/" end className="hidden rounded-full px-3 py-2 text-sm font-semibold hover:bg-brand-light sm:block">Catálogo</NavLink>
+            <Link to="/carrito" aria-label="Carrito" className="relative rounded-full p-2 hover:bg-brand-light">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 7h12l1 13H5L6 7Z" /><path d="M9 7a3 3 0 0 1 6 0" /></svg>
+              {count > 0 && <span className="absolute -right-0.5 -top-0.5 min-w-[18px] rounded-full bg-brand px-1 text-center text-[11px] font-bold leading-[18px] text-white">{count}</span>}
+            </Link>
+            <button aria-label="Menú" onClick={() => setOpen(!open)} className="rounded-full p-2 hover:bg-brand-light">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+            </button>
+          </div>
+          {open && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+              <nav className="absolute right-4 top-full z-50 mt-1 w-52 rounded-2xl border border-gold-light bg-white p-2 shadow-lg">
+                <Link to="/" className={item}>Catálogo</Link>
+                <Link to="/ofertas" className={item}>Ofertas</Link>
+                <Link to="/carrito" className={item}>Carrito{count > 0 ? ` (${count})` : ""}</Link>
+              </nav>
+            </>
+          )}
         </div>
       </header>
       <main className="flex-1"><Outlet /></main>
-      <footer className="mt-12 border-t border-gold-light/70 bg-white py-8 text-center">
-        <img src="/logo.jpg" alt="" className="mx-auto h-20 w-20 rounded-full object-cover" />
-        <p className="mt-2 text-xs tracking-[0.3em] text-ink/70">BELLEZA QUE EMPODERA</p>
-        <p className="mt-1 text-xs text-ink/50">© {new Date().getFullYear()} Chingona Beauty</p>
+      <footer className="mt-12 border-t border-gold-light/70 py-6 text-center">
+        <p className="text-xs tracking-[0.3em] text-ink/60">BELLEZA QUE EMPODERA</p>
       </footer>
     </div>
   );

@@ -33,7 +33,7 @@ export default function AdminOrders() {
             {open === o.id && (
               <div className="mt-3 space-y-2 border-t border-gold-light pt-3 text-sm">
                 <ul>{o.items.map((i) => <li key={i.id}>{i.quantity} × {i.name} — {money(i.unitPrice * i.quantity)}</li>)}</ul>
-                <p>Teléfono: <a className="font-semibold text-brand" href={`https://wa.me/${o.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">{o.phone}</a></p>
+                {o.phone && <p>Teléfono: <a className="font-semibold text-brand" href={`https://wa.me/${o.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">{o.phone}</a></p>}
                 {o.notes && <p>Notas: {o.notes}</p>}
               </div>
             )}

@@ -1,8 +1,10 @@
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, setToken } from "../../api";
+import { useNoIndex } from "../../noindex";
 
 export default function AdminLogin() {
+  useNoIndex();
   const nav = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

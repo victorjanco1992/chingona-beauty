@@ -20,4 +20,3 @@ Crea el proyecto en Neon y copia la cadena **pooled** (`DATABASE_URL`) y la **di
 ## Local
 - Backend: `cd backend && cp .env.example .env && npm i && npm run db:push && npm run dev`
 - Frontend: `cd frontend && cp .env.example .env && npm i && npm run dev` (con `VITE_API_URL=http://localhost:4000`)
-# chingona-beauty

@@ -1,6 +1,5 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
-import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
 import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/CartPage";
@@ -15,8 +14,8 @@ export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/catalogo" element={<Catalog />} />
+        <Route path="/" element={<Catalog />} />
+        <Route path="/catalogo" element={<Navigate to="/" replace />} />
         <Route path="/ofertas" element={<Catalog offersOnly />} />
         <Route path="/producto/:slug" element={<ProductPage />} />
         <Route path="/carrito" element={<CartPage />} />

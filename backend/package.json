@@ -1,3 +1,4 @@
+
 {
   "name": "chingona-beauty-backend",
   "version": "1.0.0",
@@ -10,7 +11,9 @@
     "seed": "tsx --env-file=.env prisma/seed.ts",
     "typecheck": "tsc --noEmit"
   },
-  "prisma": { "seed": "tsx --env-file=.env prisma/seed.ts" },
+  "prisma": {
+    "seed": "tsx --env-file=.env prisma/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "@types/bcryptjs": "^2.4.6",

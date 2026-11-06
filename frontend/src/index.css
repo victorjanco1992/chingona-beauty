@@ -18,3 +18,8 @@
   .card { @apply rounded-2xl border border-gold-light/60 bg-white shadow-sm; }
   .container-x { @apply mx-auto w-full max-w-6xl px-4; }
 }
+
+@layer utilities {
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}

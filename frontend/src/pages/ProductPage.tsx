@@ -17,7 +17,7 @@ export default function ProductPage() {
     api<Product>(`/api/products/${slug}`).then((d) => { setP(d); setIdx(0); setQty(1); }).catch((e) => setError(e.message));
   }, [slug]);
 
-  if (error) return <div className="container-x py-20 text-center"><p>{error}</p><Link to="/catalogo" className="btn-primary mt-4">Volver al catálogo</Link></div>;
+  if (error) return <div className="container-x py-20 text-center"><p>{error}</p><Link to="/" className="btn-primary mt-4">Volver al catálogo</Link></div>;
   if (!p) return <p className="py-20 text-center text-ink/60">Cargando…</p>;
   const out = p.stock < 1;
   return (
@@ -37,7 +37,7 @@ export default function ProductPage() {
         )}
       </div>
       <div>
-        {p.category && <Link to={`/catalogo?categoria=${p.category.slug}`} className="text-xs font-semibold uppercase tracking-wide text-gold">{p.category.name}</Link>}
+        {p.category && <Link to={`/?categoria=${p.category.slug}`} className="text-xs font-semibold uppercase tracking-wide text-gold">{p.category.name}</Link>}
         <h1 className="mt-1 text-3xl font-bold">{p.name}</h1>
         <div className="mt-3 flex items-baseline gap-3">
           <span className="text-3xl font-bold text-brand">{money(p.offerPrice ?? p.price)}</span>

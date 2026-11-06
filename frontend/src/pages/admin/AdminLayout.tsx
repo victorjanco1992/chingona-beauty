@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Navigate, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { api, getToken, setToken } from "../../api";
+import { useNoIndex } from "../../noindex";
 
 const link = ({ isActive }: { isActive: boolean }) =>
   `rounded-full px-4 py-2 text-sm font-semibold ${isActive ? "bg-brand text-white" : "hover:bg-brand-light"}`;
 
 export default function AdminLayout() {
+  useNoIndex();
   const nav = useNavigate();
   const [ok, setOk] = useState(false);
   const token = getToken();
