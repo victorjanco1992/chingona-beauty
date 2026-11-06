@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { getToken } from "../api";
 import { useCart } from "../cart";
 
@@ -9,15 +9,6 @@ export default function Layout() {
   const { count } = useCart();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
-  const nav = useNavigate();
-  const taps = useRef({ n: 0, t: 0 });
-  const secretTap = () => {
-    const now = Date.now();
-    const s = taps.current;
-    s.n = now - s.t < 1500 ? s.n + 1 : 1;
-    s.t = now;
-    if (s.n >= 5) { s.n = 0; nav("/admin/login"); }
-  };
   useEffect(() => { window.scrollTo(0, 0); setOpen(false); }, [pathname]);
 
   return (
@@ -43,9 +34,11 @@ export default function Layout() {
               <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
               <nav className="absolute right-4 top-full z-50 mt-1 w-52 rounded-2xl border border-gold-light bg-white p-2 shadow-lg">
                 <Link to="/" className={item}>Catálogo</Link>
-                <Link to="/ofertas" className={item}>Ofertas</Link>
                 <Link to="/carrito" className={item}>Carrito{count > 0 ? ` (${count})` : ""}</Link>
-                {getToken() && <Link to="/admin" className={`${item} text-brand`}>Panel</Link>}
+                <div className="my-1 border-t border-gold-light/60" />
+                {getToken()
+                  ? <Link to="/admin" className={`${item} text-brand`}>Panel</Link>
+                  : <Link to="/admin/login" className={`${item} text-ink/60`}>Ingresar</Link>}
               </nav>
             </>
           )}
@@ -53,7 +46,7 @@ export default function Layout() {
       </header>
       <main className="flex-1"><Outlet /></main>
       <footer className="mt-12 border-t border-gold-light/70 py-6 text-center">
-        <p onClick={secretTap} className="cursor-default select-none text-xs tracking-[0.3em] text-ink/60">BELLEZA QUE EMPODERA</p>
+        <p className="text-xs tracking-[0.3em] text-ink/60">BELLEZA QUE EMPODERA</p>
       </footer>
     </div>
   );
