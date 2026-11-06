@@ -7,6 +7,7 @@ export default function ProductCard({ p }: { p: Product }) {
   const { add } = useCart();
   const out = p.stock < 1;
   const off = p.offerPrice != null;
+  const pct = off ? Math.round((1 - (p.offerPrice as number) / p.price) * 100) : 0;
   return (
     <div className="card flex flex-col overflow-hidden">
       <Link to={`/producto/${p.slug}`} className="relative block aspect-square bg-brand-light/40">
@@ -15,8 +16,12 @@ export default function ProductCard({ p }: { p: Product }) {
         ) : (
           <img src="/logo.jpg" alt="" className="h-full w-full object-contain p-6 opacity-30" />
         )}
-        {off && !out && <span className="absolute left-2 top-2 rounded-full bg-brand px-2 py-0.5 text-xs font-bold text-white">OFERTA</span>}
-        {out && <span className="absolute left-2 top-2 rounded-full bg-ink px-2 py-0.5 text-xs font-bold text-white">AGOTADO</span>}
+        {off && !out && (
+          <span className="absolute left-2 top-2 rounded-full bg-brand px-2.5 py-1 text-xs font-bold text-white shadow">
+            OFERTA{pct > 0 ? ` -${pct}%` : ""}
+          </span>
+        )}
+        {out && <span className="absolute left-2 top-2 rounded-full bg-ink px-2.5 py-1 text-xs font-bold text-white shadow">AGOTADO</span>}
       </Link>
       <div className="flex flex-1 flex-col gap-1 p-3">
         {p.category && <span className="text-[11px] font-semibold uppercase tracking-wide text-gold">{p.category.name}</span>}
