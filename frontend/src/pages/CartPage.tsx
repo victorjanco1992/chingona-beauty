@@ -6,6 +6,7 @@ import { useCart } from "../cart";
 export default function CartPage() {
   const { items, total, setQty, remove, clear } = useCart();
   const [wa, setWa] = useState<string | null>(null);
+  const [name, setName] = useState("");
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -20,11 +21,11 @@ export default function CartPage() {
     try {
       const order = await api<{ number: number; total: number }>("/api/orders", {
         method: "POST",
-        body: { notes, items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })) },
+        body: { customerName: name, notes, items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })) },
       });
       const lines = items.map((i) => `• ${i.quantity} x ${i.name} — ${money(i.price * i.quantity)}`);
       const text = [
-        `Hola Chingona Beauty! Quiero confirmar mi pedido #${order.number}`,
+        `Hola Chingona Beauty! Soy ${name.trim()}, quiero confirmar mi pedido #${order.number}`,
         "",
         ...lines,
         "",
@@ -69,6 +70,7 @@ export default function CartPage() {
       </div>
       <form onSubmit={submit} className="card h-fit space-y-3 p-5 lg:col-span-2">
         <h2 className="text-xl font-bold">Resumen</h2>
+        <div><label className="label">Tu nombre</label><input className="input" required minLength={2} value={name} onChange={(e) => setName(e.target.value)} /></div>
         <div><label className="label">Notas (opcional)</label><textarea className="input" rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} /></div>
         <div className="flex items-center justify-between border-t border-gold-light pt-3 text-lg font-bold"><span>Total</span><span className="text-brand">{money(total)}</span></div>
         {error && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
