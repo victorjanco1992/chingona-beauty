@@ -6,15 +6,28 @@ import { getSettings, prisma, productInclude, serializeProduct, signToken, wrap 
 
 const r = Router();
 
+// Límite de intentos de login (best-effort por instancia)
+const attempts = new Map<string, { n: number; t: number }>();
+function tooMany(ip: string) {
+  const now = Date.now();
+  const a = attempts.get(ip);
+  if (!a || now - a.t > 15 * 60_000) { attempts.set(ip, { n: 1, t: now }); return false; }
+  a.n++;
+  return a.n > 10;
+}
+
 r.post(
   "/auth/login",
   wrap(async (req, res) => {
+    const ip = String(req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
+    if (tooMany(ip)) return res.status(429).json({ error: "Demasiados intentos. Intenta más tarde." });
     const { email, password } = z
       .object({ email: z.string().email("Correo inválido"), password: z.string().min(1, "Falta la contraseña") })
       .parse(req.body);
     const admin = await prisma.admin.findUnique({ where: { email: email.toLowerCase() } });
     if (!admin || !(await bcrypt.compare(password, admin.passwordHash)))
       return res.status(401).json({ error: "Credenciales incorrectas" });
+    attempts.delete(ip);
     res.json({ token: signToken(admin.id) });
   })
 );
@@ -82,8 +95,8 @@ r.get(
 );
 
 const orderSchema = z.object({
-  customerName: z.string().trim().min(2, "Ingresa tu nombre").max(120),
-  phone: z.string().trim().min(6, "Ingresa tu teléfono").max(30),
+  customerName: z.string().trim().max(120).default("Cliente WhatsApp"),
+  phone: z.string().trim().max(30).default(""),
   notes: z.string().trim().max(1000).default(""),
   items: z
     .array(z.object({ productId: z.string(), quantity: z.number().int().min(1).max(99) }))
