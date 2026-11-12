@@ -207,18 +207,31 @@ r.patch(
 /* ---------- Ajustes ---------- */
 r.get("/settings", wrap(async (_req, res) => res.json(await getSettings())));
 
+const socialUrl = z
+  .string()
+  .trim()
+  .max(300)
+  .default("")
+  .refine((v) => v === "" || /^https?:\/\//i.test(v), "Los enlaces deben empezar con https://");
+
 r.put(
   "/settings",
   wrap(async (req, res) => {
-    const { whatsappNumber } = z
-      .object({ whatsappNumber: z.string().regex(/^\d{8,15}$/, "Usa solo dígitos, con código de país (8 a 15)") })
-      .parse({ whatsappNumber: String(req.body?.whatsappNumber ?? "").replace(/\D/g, "") });
-    await prisma.setting.upsert({
-      where: { key: "whatsappNumber" },
-      update: { value: whatsappNumber },
-      create: { key: "whatsappNumber", value: whatsappNumber },
-    });
-    res.json({ whatsappNumber });
+    const b = z
+      .object({
+        whatsappNumber: z.string().regex(/^\d{8,15}$/, "Usa solo dígitos, con código de país (8 a 15)"),
+        instagram: socialUrl,
+        tiktok: socialUrl,
+        facebook: socialUrl,
+        youtube: socialUrl,
+      })
+      .parse({ ...req.body, whatsappNumber: String(req.body?.whatsappNumber ?? "").replace(/\D/g, "") });
+    await prisma.$transaction(
+      Object.entries(b).map(([key, value]) =>
+        prisma.setting.upsert({ where: { key }, update: { value }, create: { key, value } })
+      )
+    );
+    res.json(await getSettings());
   })
 );
 
