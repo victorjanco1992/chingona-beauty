@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api, setToken } from "../../api";
 import { useNoIndex } from "../../noindex";
 
@@ -31,6 +31,7 @@ export default function AdminLogin() {
         <div><label className="label">Contraseña</label><input type="password" className="input" required value={password} onChange={(e) => setPassword(e.target.value)} /></div>
         {error && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
         <button className="btn-primary w-full" disabled={busy}>{busy ? "Ingresando…" : "Ingresar"}</button>
+        <Link to="/" className="btn-ghost w-full">← Volver a la tienda</Link>
       </form>
     </div>
   );
