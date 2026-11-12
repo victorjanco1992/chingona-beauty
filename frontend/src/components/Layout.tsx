@@ -1,15 +1,29 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import { getToken } from "../api";
+import { api, getToken } from "../api";
 import { useCart } from "../cart";
 
 const item = "block rounded-xl px-4 py-3 text-sm font-semibold hover:bg-brand-light";
+
+interface Settings { whatsappNumber: string; instagram: string; tiktok: string; facebook: string; youtube: string }
 
 export default function Layout() {
   const { count } = useCart();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
+  const [cfg, setCfg] = useState<Settings | null>(null);
   useEffect(() => { window.scrollTo(0, 0); setOpen(false); }, [pathname]);
+  useEffect(() => { api<Settings>("/api/settings").then(setCfg).catch(() => {}); }, []);
+
+  const socials = cfg
+    ? [
+        { name: "Instagram", url: cfg.instagram },
+        { name: "TikTok", url: cfg.tiktok },
+        { name: "Facebook", url: cfg.facebook },
+        { name: "YouTube", url: cfg.youtube },
+        { name: "WhatsApp", url: cfg.whatsappNumber ? `https://wa.me/${cfg.whatsappNumber}` : "" },
+      ].filter((x) => x.url)
+    : [];
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -21,12 +35,11 @@ export default function Layout() {
           </Link>
           <div className="flex items-center gap-1">
             <NavLink to="/" end className="hidden rounded-full px-3 py-2 text-sm font-semibold hover:bg-brand-light sm:block">Catálogo</NavLink>
-            <Link to="/contacto" className={item}>Contacto</Link>
+            <NavLink to="/contacto" className="hidden rounded-full px-3 py-2 text-sm font-semibold hover:bg-brand-light sm:block">Contacto</NavLink>
             <Link to="/carrito" aria-label="Carrito" className="relative rounded-full p-2 hover:bg-brand-light">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 7h12l1 13H5L6 7Z" /><path d="M9 7a3 3 0 0 1 6 0" /></svg>
               {count > 0 && <span className="absolute -right-0.5 -top-0.5 min-w-[18px] rounded-full bg-brand px-1 text-center text-[11px] font-bold leading-[18px] text-white">{count}</span>}
             </Link>
-            
             <button aria-label="Menú" onClick={() => setOpen(!open)} className="rounded-full p-2 hover:bg-brand-light">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
             </button>
@@ -35,9 +48,9 @@ export default function Layout() {
             <>
               <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
               <nav className="absolute right-4 top-full z-50 mt-1 w-52 rounded-2xl border border-gold-light bg-white p-2 shadow-lg">
-                <Link to="/" className={item}>Catálogo</Link>
-                <Link to="/carrito" className={item}>Carrito{count > 0 ? ` (${count})` : ""}</Link>
-                <div className="my-1 border-t border-gold-light/60" />
+                <Link to="/" className={`${item} sm:hidden`}>Catálogo</Link>
+                <Link to="/contacto" className={`${item} sm:hidden`}>Contacto</Link>
+                <div className="my-1 border-t border-gold-light/60 sm:hidden" />
                 {getToken()
                   ? <Link to="/admin" className={`${item} text-brand`}>Panel</Link>
                   : <Link to="/admin/login" className={`${item} text-ink/60`}>Ingresar</Link>}
@@ -47,7 +60,19 @@ export default function Layout() {
         </div>
       </header>
       <main className="flex-1"><Outlet /></main>
-      <footer className="mt-12 border-t border-gold-light/70 py-6 text-center">
+      <footer className="mt-12 border-t border-gold-light/70 py-8 text-center">
+        {socials.length > 0 && (
+          <div className="container-x mb-4">
+            <p className="mb-3 text-sm font-semibold">Seguinos</p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {socials.map((s) => (
+                <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="rounded-full border border-brand px-4 py-2 text-sm font-semibold text-brand transition hover:bg-brand hover:text-white">
+                  {s.name}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
         <p className="text-xs tracking-[0.3em] text-ink/60">BELLEZA QUE EMPODERA</p>
       </footer>
     </div>
