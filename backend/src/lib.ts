@@ -65,11 +65,16 @@ export function serializeProduct(p: any) {
     createdAt: p.createdAt,
   };
 }
-
 export async function getSettings() {
   const rows = await prisma.setting.findMany();
   const map = Object.fromEntries(rows.map((r) => [r.key, r.value]));
-  return { whatsappNumber: (map.whatsappNumber ?? process.env.WHATSAPP_NUMBER ?? "").replace(/\D/g, "") };
+  return {
+    whatsappNumber: (map.whatsappNumber ?? process.env.WHATSAPP_NUMBER ?? "").replace(/\D/g, ""),
+    instagram: map.instagram ?? "",
+    tiktok: map.tiktok ?? "",
+    facebook: map.facebook ?? "",
+    youtube: map.youtube ?? "",
+  };
 }
 
 export function parseDataUrl(dataUrl: string) {
